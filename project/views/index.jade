@@ -1,5 +1,210 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+    .clearfix
+    .content
+        .sport-your
+            link(href='stylesheets/owl.carousel.css', rel='stylesheet')
+            script(src='javascripts/owl.carousel.js')
+            script.
+                $(document).ready(function() {
+                    $("#owl-demo").owlCarousel({
+                        items : 5,
+                        lazyLoad : true,
+                        autoPlay : true,
+                        navigation : true,
+                        navigationText :  true,
+                        pagination : false,
+                    });
+                });
+            #example1
+                #owl-demo.owl-carousel.text-center
+                    .item
+                        a(href='single.html', title='image', rel='title1')
+                            img.img-responsive(src='images/pic.jpg', alt='')
+                            .run
+                                i
+                                p RUNNING
+                    .item
+                        a(href='single.html', title='image', rel='title1')
+                            img.img-responsive(src='images/pic1.jpg', alt='')
+                            .run
+                                i.foot-in
+                                p FOOTBALL
+                    .item
+                        a(href='single.html', title='image', rel='title1')
+                            img.img-responsive(src='images/pic2.jpg', alt='')
+                            .run
+                                i.cycling
+                                p CYCLING
+                    .item
+                        a(href='single.html', title='image', rel='title1')
+                            img.img-responsive(src='images/pic3.jpg', alt='')
+                            .run
+                                i.fitness
+                                p FITNESS
+                    .item
+                        a(href='single.html', title='image', rel='title1')
+                            img.img-responsive(src='images/pic4.jpg', alt='')
+                            .run
+                                i.tennis
+                                p TENNIS
+                    .item
+                        a(href='single.html', title='image', rel='title1')
+                            img.img-responsive(src='images/pic.jpg', alt='')
+                            .run
+                                i
+                                p RUNNING
+                    .item
+                        a(href='single.html', title='image', rel='title1')
+                            img.img-responsive(src='images/pic1.jpg', alt='')
+                            .run
+                                i.foot-in
+                                p FOOTBALL
+                    .item
+                        a(href='single.html', title='image', rel='title1')
+                            img.img-responsive(src='images/pic2.jpg', alt='')
+                            .run
+                                i.cycling
+                                p CYCLING
+                    .item
+                        a(href='single.html', title='image', rel='title1')
+                            img.img-responsive(src='images/pic3.jpg', alt='')
+                            .run
+                                i.fitness
+                                p FITNESS
+                    .item
+                        a(href='single.html', title='image', rel='title1')
+                            img.img-responsive(src='images/pic4.jpg', alt='')
+                            .run
+                                i.tennis
+                                p TENNIS
+                    .item
+                        a(href='single.html', title='image', rel='title1')
+                            img.img-responsive(src='images/pic.jpg', alt='')
+                            .run
+                                i
+                                p RUNNING
+            h6.your-in Your sport
+            .line2
+        // //sreen-gallery-cursual--
+        .content-grids
+            .col-md-4.content-grid
+                a.lot(href='single.html')
+                    img.img-responsive(src='images/sh.png', alt='')
+                .shoe
+                    p
+                        | Nike 3.0 V4 Men Grey Royal
+                        | Blue with White
+                    label $67.99
+                    a(href='single.html') find a store
+                .clearfix
+                b.plus-in +
+            .col-md-4.content-grid
+                a.lot(href='single.html')
+                    img.img-responsive(src='images/sh1.png', alt='')
+                .shoe
+                    p Nike 3.0 V4 Men Grey RoyalBlue with White
+                    label $67.99
+                    a(href='single.html') find a store
+                .clearfix
+                b.plus-in +
+            .col-md-4.content-grid
+                a.lot(href='single.html')
+                    img.img-responsive(src='images/sh2.png', alt='')
+                .shoe
+                    p Nike 3.0 V4 Men Grey RoyalBlue with White
+                    label $67.99
+                    a(href='single.html') find a store
+                .clearfix
+                b.plus-in +
+            .clearfix
+        //
+        .content-top
+            .col-md-4.top-content
+                a(href='single.html')
+                    img.img-responsive(src='images/pi.jpg', alt='')
+            .col-md-4.top-content
+                a(href='single.html')
+                    img.img-responsive(src='images/pi1.jpg', alt='')
+            .col-md-4.top-content
+                a(href='single.html')
+                    img.img-responsive(src='images/pi2.jpg', alt='')
+            .clearfix
+        .content-bottom
+            .col-md-8.bottom-content
+                script(src='javascripts/responsiveslides.min.js')
+                script.
+                    $(function () {
+                         $("#slider").responsiveSlides({
+                            auto: true,
+                            speed: 500,
+                            namespace: "callbacks",
+                            pager: false,
+                            nav:true,
+                        });
+                    });
+                .slider
+                    .callbacks_container
+                        ul#slider.rslides
+                            li
+                                img(src='images/vi.jpg', alt='')
+                            li
+                                img(src='images/v2.jpg', alt='')
+                            li
+                                img(src='images/vi.jpg', alt='')
+                    .london
+                        h5 London Marathon 2013
+                        p 24/2013 - 6Mins
+            .col-md-4.bottom-grid
+                h4 Latest Sport News
+                .news
+                    span 25/07
+                    p
+                        | Sporting wonders have come so thick and fast since last summer that we decided it... time
+                    .foot
+                        label football
+                        ul.eye
+                            li
+                                span
+                                    i
+                                    | 315
+                            li
+                                a(href='#')
+                                    i.comment
+                                    |  3
+                        .clearfix
+                .news
+                    span 25/07
+                    p
+                        | Sporting wonders have come so thick and fast since last summer that we decided it... time
+                    .foot
+                        label football
+                        ul.eye
+                            li
+                                span
+                                    i
+                                    | 315
+                            li
+                                a(href='#')
+                                    i.comment
+                                    |  3
+                        .clearfix
+                .news
+                    span 25/07
+                    p
+                        | Sporting wonders have come so thick and fast since last summer that we decided it... time
+                    .foot
+                        label football
+                        ul.eye
+                            li
+                                span
+                                    i
+                                    | 315
+                            li
+                                a(href='#')
+                                    i.comment
+                                    |  3
+                        .clearfix
+                a.view(href='#') view all articles
+            .clearfix

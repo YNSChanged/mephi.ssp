@@ -1,7 +1,62 @@
 doctype html
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+    head
+        title Туристическое оборудование в аренду
+        link(href='stylesheets/bootstrap.css', rel='stylesheet', type='text/css', media='all')
+        // jQuery (necessary for Bootstrap's JavaScript plugins)
+        script(src='javascripts/jquery.min.js')
+        // Custom Theme files
+        // theme-style
+        link(href='stylesheets/style.css', rel='stylesheet', type='text/css', media='all')
+        // //theme-style
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+        meta(name='keywords', content='Sport Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, \
+    Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design')
+        script(type='application/x-javascript').
+            addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); }
+        // fonts
+        link(href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800', rel='stylesheet', type='text/css')
+        // //fonts
+    body
+        // header
+        .line
+        .header
+            .logo
+                a(href='/')
+                    img(src='images/logo.png', alt='')
+            .header-top
+                .header-grid
+                    ul.header-in
+                    .search-box
+                        #sb-search.sb-search
+                            form
+                                input#search.sb-search-input(placeholder='Что вы ищете?', type='search', name='search')
+                                input.sb-search-submit(type='submit', value='')
+                                span.sb-icon-search
+                    script(src='javascripts/classie.js')
+                    script(src='javascripts/uisearch.js')
+                    script.
+                        new UISearch( document.getElementById( 'sb-search' ) );
+                    .online
+                        a(href='/basket') Корзина
+                    .clearfix
+                .header-bottom
+                    .h_menu4
+                        ul.nav
+                            li.active
+                                a(href='product.html') Палатки
+                            li
+                                a(href='product.html') Рюкзаки
+                            li
+                                a(href='product.html') Спальные мешки
+                            li
+                                a(href='product.html') Посуда
+                            li
+                                a(href='product.html') Ножи
+                            li
+                                a(href='contact.html') Скидки
+                            li
+                                a(href='account.html') Наборы
+                    .clearfix
+        block content
