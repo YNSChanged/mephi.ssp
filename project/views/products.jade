@@ -1,0 +1,25 @@
+extends layout
+
+block content
+    .clearfix
+    .product-grids
+        .container
+            - var i = 0;
+            mixin product(prod)
+                - if (i%3 == 0) {
+                .product-top
+                - }
+                - i = i+1;
+                    .col-md-4.content-grid
+                        a.lot(href=prod.href)
+                            img.img-responsive(src=prod.pic, alt='')
+                        .shoe
+                            p
+                                | #{prod.name}
+                                | #{prod.color}
+                            label=prod.price
+                        .clearfix
+            for prod in topProdList
+                +product(prod)
+
+                .clearfix

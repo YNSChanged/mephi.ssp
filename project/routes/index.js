@@ -14,11 +14,13 @@ var prodList = [new Prod("1","2","3")]; //3 топовых товара
 
 router.get('/', function(req, res) {
   res.render('index', { topProdList: prodList });
-});
-
-router.get('/product/:category', function (req, res) {
+}).get('/product/:category', function (req, res) {
     //тут получение из базы данных соответствующей категории.
-    res.render('products', { category: req.params.category })
+    res.render('products', { topProdList: prodList });
+}).get('/single/:id', function (req, res) {
+    //запрос из бд
+    var prod;
+    res.render('single', {prod: prod});
 });
 
 module.exports = router;
