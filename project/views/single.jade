@@ -1,0 +1,39 @@
+extends layout
+
+block content
+    .clearfix
+    .container
+        .single
+            .col-md-9.top-in-single
+                .col-md-5.single-top
+                    ul#etalage
+                        li
+                            img.etalage_thumb_image.img-responsive(src=prod.mainImg, alt='')
+                        li
+                            img.etalage_thumb_image.img-responsive(src=prod.img[0], alt='')
+                        li
+                            img.etalage_thumb_image.img-responsive(src=prod.img[1], alt='')
+                        li
+                            img.etalage_thumb_image.img-responsive(src=prod.img[2], alt='')
+                .col-md-7.single-top-in
+                    .single-para
+                        h4=prod.name
+                        h6=prod.color
+                        p=prod.description
+                        label.add-to=prod.price
+                .clearfix
+                .product-top
+                    mixin add(x)
+                        .col-md-4.grid-product-in
+                            .product-grid
+                                a(href=x.href)
+                                    img.img-responsive(src=x.mainImg, alt='')
+                                .shoe-in
+                                    h6
+                                        a(href='single.html')=x.name
+                                    label=x.price
+                    +add(p[0])
+                    +add(p[1])
+                    +add(p[2])
+                    .clearfix
+            .clearfix

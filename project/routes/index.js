@@ -8,9 +8,12 @@ function Prod(name, descr, pic, href, color, price){
     this.href = href;
     this.color = color;
     this.price = price;
+    this.mainImg = "";
+    this.img = ["1", "2", "3"];
 }
 
 var prodList = [new Prod("1","2","3")]; //3 топовых товара
+var prod = new Prod("1","2","3","4");
 
 router.get('/', function(req, res) {
   res.render('index', { topProdList: prodList });
@@ -19,8 +22,9 @@ router.get('/', function(req, res) {
     res.render('products', { topProdList: prodList });
 }).get('/single/:id', function (req, res) {
     //запрос из бд
-    var prod;
-    res.render('single', {prod: prod});
+    res.render('single', {prod: prod, p: [prod, prod, prod]});
+}).get('/basket', function (req, res) {
+
 });
 
 module.exports = router;
