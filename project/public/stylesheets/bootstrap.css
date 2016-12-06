@@ -309,6 +309,11 @@ img {
   max-width: 100%;
   height: auto;
 }
+.img-responsive1 {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
 .img-rounded {
   border-radius: 6px;
 }

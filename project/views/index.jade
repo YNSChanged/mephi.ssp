@@ -37,15 +37,17 @@ block content
             .line2
         .content-grids
             h1 Самые популярные
+
             mixin product(prod)
                 .col-md-4.content-grid
                     a.lot(href=prod.href)
-                        img.img-responsive(src=prod.pic, alt='')
+                        img.img-responsive1(src='product/images/'+prod.mainImg, alt='')
                     .shoe
                         p
                             | #{prod.name}
                             | #{prod.color}
                         label=prod.price
                     .clearfix
+            .line2
             for prod in topProdList
                 +product(prod)
