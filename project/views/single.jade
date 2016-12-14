@@ -6,15 +6,8 @@ block content
         .single
             .col-md-9.top-in-single
                 .col-md-5.single-top
-                    ul#etalage
-                        li
-                            img.etalage_thumb_image.img-responsive(src=prod.mainImg, alt='')
-                        li
-                            img.etalage_thumb_image.img-responsive(src=prod.img[0], alt='')
-                        li
-                            img.etalage_thumb_image.img-responsive(src=prod.img[1], alt='')
-                        li
-                            img.etalage_thumb_image.img-responsive(src=prod.img[2], alt='')
+                    #etalage
+                        img.etalage_thumb_image.img-responsive(src="images/" + prod.mainImg, alt='')
                 .col-md-7.single-top-in
                     .single-para
                         h4=prod.name
@@ -32,8 +25,5 @@ block content
                                     h6
                                         a(href='single.html')=x.name
                                     label=x.price
-                    +add(p[0])
-                    +add(p[1])
-                    +add(p[2])
                     .clearfix
             .clearfix
