@@ -1,6 +1,13 @@
 extends layout
 
 block content
-
+    mixin add(p)
+        tr
+            td= p.name
+            td= p.price
+    .content-grids
+        table
+            - for i in list
+                +add(i)
 
 

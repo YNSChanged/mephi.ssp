@@ -1,0 +1,18 @@
+doctype html
+html
+    head
+        title Вход
+    body
+        form(action='auth', autocomplete='on', method="get")
+            h1 Вход
+            h4=error
+            p
+                label.uname(for='username', data-icon='u')  Your username
+                input#username(name='username', required='required', type='text', placeholder='myusername')
+            p
+                label.youpasswd(for='password', data-icon='p')  Your password
+                input#password(name='password', required='required', type='password', placeholder='eg. X8df!90EO')
+            p.login.button
+                input(type='submit', value='Login')
+            p.change_link
+                a.to_subscribe(href='/registration') Регистрация

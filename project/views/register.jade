@@ -1,0 +1,23 @@
+form(action='register', autocomplete='on')
+    h1  Sign up
+    h4=error
+    p
+        label(for='usernamesignup', data-icon='u') Your username
+        input#usernamesignup(name='usernamesignup', required='required', type='text', placeholder='mysuperusername690')
+    p
+        label(data-icon='n') Name
+        input(name='name', required='required', type='text', placeholder='Вася Пупкин')
+    p
+        label.youmail(for='emailsignup', data-icon='e')  Your email
+        input#emailsignup(name='emailsignup', required='required', type='email', placeholder='mysupermail@mail.com')
+    p
+        label.youpasswd(for='passwordsignup', data-icon='p') Your password
+        input#passwordsignup(name='passwordsignup', required='required', type='password', placeholder='eg. X8df!90EO')
+    p
+        label.youpasswd(for='passwordsignup_confirm', data-icon='p') Please confirm your password
+        input#passwordsignup_confirm(name='passwordsignup_confirm', required='required', type='password', placeholder='eg. X8df!90EO')
+    p.signin.button
+        input(type='submit', value='Sign up')
+    p.change_link
+        | Already a member ?
+        a.to_subscribe(href='#tologin')  Go and log in

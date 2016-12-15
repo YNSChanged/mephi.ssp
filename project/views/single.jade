@@ -14,16 +14,7 @@ block content
                         h6=prod.color
                         p=prod.description
                         label.add-to=prod.price
+                        a(href="/product/buy=" + id)
+                            label.add-to Арендовать
                 .clearfix
-                .product-top
-                    mixin add(x)
-                        .col-md-4.grid-product-in
-                            .product-grid
-                                a(href=x.href)
-                                    img.img-responsive(src=x.mainImg, alt='')
-                                .shoe-in
-                                    h6
-                                        a(href='single.html')=x.name
-                                    label=x.price
-                    .clearfix
             .clearfix

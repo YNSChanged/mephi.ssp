@@ -28,6 +28,8 @@ html
             .header-top
                 .header-grid
                     ul.header-in
+                        li
+                            a(href="/lk")=name
                     .search-box
                         #sb-search.sb-search
                             form
@@ -39,7 +41,7 @@ html
                     script.
                         new UISearch( document.getElementById( 'sb-search' ) );
                     .online
-                        a(href='/basket') Корзина
+                        a(href='/basket')="Корзина: " + basketCounter
                     .clearfix
                 .header-bottom
                     .h_menu4
