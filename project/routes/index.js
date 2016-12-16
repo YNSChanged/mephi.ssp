@@ -1,11 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var mysql      = require('mysql');
+var utf8 = require('utf8');
 var connection = mysql.createConnection({
     host     : 'localhost',
     user     : 'yns',
     password : '',
     database: 'mephi',
+    charset: 'UTF8_GENERAL_CI',
     insecureAuth : true
 });
 
@@ -42,20 +44,23 @@ var prodList = [new Prod('Палатка МОБИ 2',"Вместимость (ч
     "Водостойкость тента (мм/в.ст.): 2 000; " +
     "Водостойкость дна (мм/в.ст.): 3 000",'/product/id=1','Синий','1990','id1.jpg')]; //3 топовых товара
 var basketList = prodList;
-var currentSessions = [0];
+var currentSessions = [];
 
 router.get('/', function(req, res) {
     if (req.session.sessId) {
         if (req.session.auth) res.render('index', { name: req.session.name, topProdList: prodList, basketCounter: req.session.basketCounter})
         else res.render('index', { name: 'Авторизация', topProdList: prodList, basketCounter: req.session.basketCounter});
     } else {
-        var sess;
+        var sess = 0;
         connection.query('SELECT id FROM Sessions ORDER BY id;', function(err, rows, fields) {
             var l = [];
             if (rows) rows.forEach(function (item) {
-                l.push(item.id);
+                l.push(parseInt(item.id));
             });
-            currentSessions.push(l);
+            console.log(currentSessions);
+            if (l.length > 0) l.forEach(function (item) {
+                currentSessions.push(item);
+            });
             currentSessions = ArrNoDupe(currentSessions);
             var i = 0;
             while (i == currentSessions[i]) i++;
@@ -63,20 +68,30 @@ router.get('/', function(req, res) {
         });
         req.session.sessId = sess;
         currentSessions.push(sess);
-        if (!req.session.basketCounter) req.session.basketCounter = 0;
+        if (!req.session.basketCounter){
+            req.session.basket = [];
+            req.session.basketCounter = 0;
+        }
         req.session.auth = false;
+        console.log(req.session.sessId);
         res.render('index', {name: 'Авторизация', topProdList: prodList, basketCounter: 0});
     }
 }).get('/lk', function (req, res) {
+    if (!req.session.basket) req.session.basket = [];
+    console.log(req.session.sessId);
     if (req.session.auth) res.redirect('/');
     else res.render('auth', {error: ""})
 }).get('/auth', function (req, res) {
+    if (!req.session.basket) req.session.basket = [];
     connection.query('SELECT * FROM USERS WHERE login=' + req.query.username + ' AND password=' + req.query.password + ';', function (err, rows) {
         if (rows) {
             req.session.auth = true;
             req.session.sessId = rows[0].sessionId;
+            res.redirect('/');
         }
-        else res.render('auth', { error: "Неверные данные" });
+        else {
+            res.render('auth', { error: "Неверные данные" });
+        }
     });
     if (req.session.auth) connection.query('SELECT * FROM SESSIONS WHERE id=' + req.session.sessId + ';', function (err, rows) {
         req.session.basket.push(JSON.parse(rows[0].basket));
@@ -84,33 +99,36 @@ router.get('/', function(req, res) {
         req.session.basketCounter = req.session.basket.size();
     })
 }).get('/registration', function (req, res) {
+    if (!req.session.basket) req.session.basket = [];
     res.render('register', {error: ""});
 }).get('/register', function (req, res) {
+    if (!req.session.basket) req.session.basket = [];
+    console.log(req.session.sessId);
     if (req.query.passwordsignup != req.query.passwordsignup_confirm) res.render('register', {error: "Пароли не совпадают"});
     else {
-        console.log(1);
         var er=false;
         var id = 0;
         connection.query('SELECT id FROM Users ORDER BY DESC;', function (err, rows) {
             if (rows) id = rows[0].id + 1;
         })
-        console.log(2);
-        connection.query('INSERT INTO Users(id,sessionId,login,password,name,email) ' +
-            'VALUES('+ id +','+ req.session.sessId +','+ req.query.usernamesignup +','+
-            req.query.passwordsignup +','+ req.query.name +',' + req.query.emailsignup + ');', function (err, rows) {
+        connection.query('INSERT INTO Sessions(`id`, `basket`) VALUES(' + connection.escape(req.session.sessId) + ',' + connection.escape(JSON.stringify(req.session.basket)) + ');', function (err, rows) {
+            console.log(err)
+        });
+        connection.query("INSERT INTO Users(`id`,`sessionId`,`login`,`password`,`name`,`email`) " +
+            "VALUES("+ connection.escape(id) +","+ connection.escape(req.session.sessId) +","+ connection.escape(req.query.usernamesignup) +","+
+            connection.escape(req.query.passwordsignup) +","+ connection.escape(utf8.decode(req.query.name)) +"," + connection.escape(req.query.emailsignup) + ");", function (err, rows) {
 
             if (err) er = true;
             console.log(err);
         })
-        console.log(3);
         if (er) res.render('register', { error: "Что-то пошло не так. Проверьте, корректно ли заполнены поля?. Возможно этот логин уже занят."});
         else {
-            connection.query('INSERT INTO Sessions(id,basket) VALUES(' + req.session.sessId + ',' + JSON.stringify(req.session.basket) + ');', function (err, rows) {});
             res.redirect('/');
         }
 
     }
 }).get('/product/:category', function (req, res) {
+    if (!req.session.basket) req.session.basket = [];
     switch (req.params.category) {
         case "tents":
             var r;
@@ -152,6 +170,8 @@ router.get('/', function(req, res) {
                 break;
         default:
             if (req.params.category.toString().substring(0,4) == "buy=") {
+                //console.log(parseInt(req.params.category.toString().substring(4)));
+                res.session.basket.push(parseInt(req.params.category.toString().substring(4)));
                 res.render('single', {prod: prodList[0], id: 1})
 
             } else
@@ -160,9 +180,8 @@ router.get('/', function(req, res) {
             break;
     }
 }).get('/basket', function (req, res) {
+    if (!req.session.basket) req.session.basket = [];
     res.render('basket', {list: basketList});
 });
-
-connection.end();
 
 module.exports = router;
