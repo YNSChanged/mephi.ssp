@@ -7,7 +7,13 @@ block content
             td= p.price
     .content-grids
         table
-            - for i in list
+            +add({name: 'Название', price: 'Цена'})
+            for i in list
                 +add(i)
+
+        -if (auth)
+                a(href='/order') Заказать
+        -if (!auth)
+                p='АВторизуйтесь, чтобы сделать заказ'
 
 

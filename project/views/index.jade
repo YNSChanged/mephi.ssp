@@ -17,37 +17,7 @@ block content
                         pagination : false,
                     });
                 });
-            #example1
-                #owl-demo.owl-carousel.text-center
-                    mixin roll(href, title, pic)
-                        .item
-                            a(href=href, title=title)
-                                img.img-responsive(src=pic)
-                                .run
-                                    p=title
-                    //6+ штук
-                    +roll('product/tent', 'ПАЛАТКИ', "images/1_280x280.jpg")
-                    +roll('product/bags', 'РЮКЗАКИ', 'images/2_280x280.jpg')
-                    +roll('product/sleep', 'СПАЛЬНЫЕ МЕШКИ', "images/3_280x280.jpg")
-                    +roll('product/staff', 'ПОСУДА', 'images/4_280x280.jpg')
-                    +roll('product/knifes', 'НОЖИ', "images/5_280x280.jpg")
-                    +roll('product/sets', 'НАБОРЫ', 'images/6_280x280.jpg')
-                    +roll('product/sales', 'СКИДКИ', 'images/7.jpg')
-            h4.your-in ТОВАРЫ
             .line2
         .content-grids
-            h1 Самые популярные
-
-            mixin product(prod)
-                .col-md-4.content-grid
-                    a.lot(href=prod.href)
-                        img.img-responsive1(src='product/images/'+prod.mainImg, alt='')
-                    .shoe
-                        p
-                            | #{prod.name}
-                            | #{prod.color}
-                        label=prod.price
-                    .clearfix
-            .line2
-            for prod in topProdList
-                +product(prod)
+            h1 Вы находитесь на сайте аренды туристического оборудования.
+            p Для того, чтобы сделать заказ, пожалуйста, авторизуйтесь.
