@@ -28,6 +28,9 @@ html
             .header-top
                 .header-grid
                     ul.header-in
+                        -if (admin)
+                            li
+                                a(href="/admin") Заказы
                         li
                             a(href="/lk")=name
                     .online

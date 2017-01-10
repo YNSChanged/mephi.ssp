@@ -1,5 +1,6 @@
 html
     head
+        script(type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js")
     body
         form(action='register' method="POST" autocomplete='on')
             h1  Sign up
@@ -7,36 +8,49 @@ html
             p
                 label(for='usernamesignup', data-icon='u') Your username
                 input#usernamesignup(name='usernamesignup',class="login", required='required', type='text', placeholder='mysuperusername690')
-                div(class="ajaxstring")
+                div(class="ajaxlogin")
             p
                 label(data-icon='n') Name
-                input(name='name', required='required', type='text', placeholder='Вася Пупкин')
+                input(name='name', required='required', class='name', type='text', placeholder='Вася Пупкин')
             p
                 label.youmail(for='emailsignup', data-icon='e')  Your email
-                input#emailsignup(name='emailsignup', required='required', type='email', placeholder='mysupermail@mail.com')
+                input#emailsignup(name='emailsignup', class='email', required='required', type='email', placeholder='mysupermail@mail.com')
             p
                 label.youpasswd(for='passwordsignup', data-icon='p') Your password
-                input#passwordsignup(name='passwordsignup', required='required', type='password', placeholder='eg. X8df!90EO')
+                input#passwordsignup(name='passwordsignup',class='pass', required='required', type='password', placeholder='eg. X8df!90EO')
             p
                 label.youpasswd(for='passwordsignup_confirm', data-icon='p') Please confirm your password
-                input#passwordsignup_confirm(name='passwordsignup_confirm', required='required', type='password', placeholder='eg. X8df!90EO')
+                input#passwordsignup_confirm(name='passwordsignup_confirm', class='passcon', required='required', type='password', placeholder='eg. X8df!90EO')
+                div(class='ajaxpass')
             p.signin.button
-                input(type='submit', class="submit", value="Sign up")
+                input(type='submit', class="submit", value="Sign up", onclick="doo(event);")
         script.
-            $('.submit').click(function (e) {
+            function doo(e) {
+                e = e || window.event;
+                console.log(e);
                 e.preventDefault();
-                var data = {login: $("input#usernamesignup").val()};
-                alert("1");
+                var login = document.getElementsByClassName('login')[0].value;
+                var pass = document.getElementsByClassName('pass')[0].value;
+                var passcon= document.getElementsByClassName('passcon')[0].value;
+                var name = document.getElementsByClassName('name')[0].value;
+                var email = document.getElementsByClassName('email')[0].value;
                 $.ajax({
                     type: 'POST',
-                    data: JSON.stringify(data),
-                    contentType: 'json',
+                    data: { login: login, pass: pass, passcon: passcon, name: name, email: email },
                     url: '/checklogin',
                     success: function (data) {
-                        $("div.ajaxstring").html("boom");
+                        if (data=='0') {
+                            $("div.ajaxlogin").html("Логин занят");
+                            $("div.ajaxpass").html("");
+                        }
+                        else if (data=='1') {
+                            $("div.ajaxpass").html("Пароли не совпадают");
+                            $("div.ajaxlogin").html("");
+                        }
+                        else window.location.replace('/');
                     },
                     error: function (e) {
                         console.log(e);
                     }
                 });
-            });
+            }

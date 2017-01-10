@@ -3,17 +3,17 @@ extends layout
 block content
     mixin add(p)
         tr
-            td= p.name
-            td= p.price
+            td= (auth=='adm') ? p.prodID : p.name
+            td= (auth=='adm') ? p.userID : p.price
     .content-grids
         table
-            +add({name: 'Название', price: 'Цена'})
+            +add({name: (auth=='adm') ? 'ID товара' : 'Название', price: (auth=='adm') ? 'ID пользователя' : 'Цена'})
             for i in list
                 +add(i)
-
-        -if (auth)
+        -if (auth != 'adm')
+            -if (auth)
                 a(href='/order') Заказать
-        -if (!auth)
-                p='АВторизуйтесь, чтобы сделать заказ'
+            -if (!auth)
+                p='Авторизуйтесь, чтобы сделать заказ'
 
 

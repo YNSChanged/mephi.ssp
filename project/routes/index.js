@@ -34,7 +34,7 @@ var basketList = prodList;
 router.get('/', function(req, res) {
     if (!req.session.basket) req.session.basket = [];
     res.cookie('bla','bla', {bla: 'bla'});
-    res.render('index', {name: (req.session.auth) ? 'Выйти' : 'Авторизация', topProdList: prodList, basketCounter: req.session.basket.length});
+    res.render('index', { admin: req.session.admin ,name: (req.session.auth) ? 'Выйти' : 'Авторизация', topProdList: prodList, basketCounter: req.session.basket.length});
 }).get('/lk', function (req, res) {
     if (req.session.auth) {
         req.session.auth = false;
@@ -42,11 +42,13 @@ router.get('/', function(req, res) {
     }
     if (req.session.auth) res.redirect('/');
     else res.render('auth', {error: ""})
-}).get('/auth', function (req, res) {
-    connection.query('SELECT * FROM Users WHERE login=' + connection.escape(req.query.username) + ' AND password=' + connection.escape(req.query.password) + ';', function (err, rows) {
-        if (rows) {
+}).post('/auth', function (req, res) {
+    console.log(req.body);
+    connection.query('SELECT * FROM Users WHERE login=' + connection.escape(req.body.username) + ' AND password=' + connection.escape(req.body.password) + ';', function (err, rows) {
+        if (Object.keys(rows).length > 0) {
+            if (req.body.username == 'admin') req.session.admin = true;
             req.session.auth = true;
-            req.session.login = req.query.username;
+            req.session.login = req.body.username;
             res.redirect('/');
         }
         else {
@@ -86,13 +88,24 @@ router.get('/', function(req, res) {
             var r;
             var list = [];
             connection.query('SELECT * FROM Products WHERE category="tents";', function (err, rows, fields) {
+                console.log(err);
                 r = rows;
-                if (r) { r.forEach(function (item) {
-                    list.push(new Prod(item.name, item.description, "/product/id=" + item.id, item.color, item.price, "id" + item.id + ".jpg"));
-                    res.render('products', {name: (req.session.auth) ? 'Выйти' : 'Авторизация', basketCounter: req.session.basket.length, topProdList:list})
-                }) }
-                res.render('products', {name: (req.session.auth) ? 'Выйти' : 'Авторизация', basketCounter: req.session.basketCounter, topProdList:[]})
-            });
+                if (Object.keys(rows).length > 0) {
+                    r.forEach(function (item) {
+                        list.push(new Prod(item.name, item.description, "/product/id=" + item.id, item.color, item.price, "id" + item.id + ".jpg"));
+                    });
+                    res.render('products', {
+                        name: (req.session.auth) ? 'Выйти' : 'Авторизация',
+                        basketCounter: req.session.basket.length,
+                        topProdList: list
+                    });
+                } else
+                    res.render('products', {
+                        name: (req.session.auth) ? 'Выйти' : 'Авторизация',
+                        basketCounter: req.session.basket.length,
+                        topProdList: list
+                    });
+                });
             break;
         default:
             if (req.params.category.toString().substring(0,4) == "buy=") {
@@ -114,25 +127,28 @@ router.get('/', function(req, res) {
     if (!req.session.basket) req.session.basket = [];
     connection.query('Select * from Products;', function (err, rows) {
         basketList = [];
+        console.log(req.session.basket);
         req.session.basket.forEach(function (item) {
             for (var i = 0; i < rows.length; i++)
                 if (rows[i].id == item) basketList.push({name: rows[i].name, price: rows[i].price});
         });
+        console.log(req.session.basket);
         res.render('basket', {name: (req.session.auth) ? 'Выйти' : 'Авторизация', basketCounter: req.session.basketCounter, list: basketList, auth: req.session.auth});
     });
 }).get('/order', function (req, res) {
-    // реализовать через триггер.
-    connection.query("SELECT id From Users where login='" + req.session.login + "';",function (err, rows1) {
+    var x = req.session.basket;
+    console.log(connection.escape(req.session.login));
+    connection.query("SELECT id From Users where login=" + connection.escape(req.session.login) + ";",function (err, rows1) {
         var i;
-        req.session.basket.forEach(function (item) {
+        console.log(x);
+        x.forEach(function (item) {
+            console.log(4);
             connection.query("Lock tables Orders write, Products write;");
             connection.query("Select MAX(id) as id from Orders;", function (err, rows) {
+                console.log(err);
                 if (!i) i = 0;
                 i++;
-                connection.query("INSERT INTO Orders(id,prodID,userID,userStatus,storeStatus) values("+ (rows[0].id+i) + "," + item + "," + rows1[0].id + ",0,0);");
-                connection.query("Select amount from Products where id=" + item + ";", function (err, rows2) {
-                    connection.query("Update Products set amount = " + (rows2[0].amount - req.session.basket.length) + " where id=" + item + ";")
-                })
+                connection.query("INSERT INTO Orders(id,prodID,userID,userStatus,storeStatus) values("+ (((rows[0].id == null) ? 0 : rows[0].id) +i) + "," + item + "," + rows1[0].id + ",0,0);");
             });
             connection.query("Unlock tables;");
         });
@@ -152,8 +168,26 @@ router.get('/', function(req, res) {
         }
     });
 }).post('/checklogin',function (req, res) {
-    console.log(req.body);
-    res.send("lol");
+    connection.query('Select * from Users where login=' + connection.escape(req.body.login) + ';', function (err, rows) {
+        console.log(rows);
+        if (Object.keys(rows).length > 0) res.send('0');
+        else if (req.body.pass != req.body.passcon) res.send('1');
+        else {
+            connection.query("Select MAX(id) as id From Users;", function (err, rows) {
+                connection.query("INSERT INTO Users(`id`,`login`,`password`,`name`,`email`) " +
+                    "VALUES("+(rows[0].id+1)+","+ connection.escape(req.body.login) +","+
+                    connection.escape(req.body.pass) +","+ connection.escape(req.body.name) +"," + connection.escape(req.body.email) + ");", function (err, rows) {
+                });
+            });
+            res.send('2');
+        }
+
+    });
+}).get('/admin',function (req, res) {
+    if (!req.session.basket) req.session.basket=[];
+    connection.query('Select * from Orders;',function (err, rows) {
+        res.render('basket', {name: (req.session.auth) ? 'Выйти' : 'Авторизация', basketCounter: req.session.basket.length, list: rows, auth: 'adm'});
+    })
 });
 
 module.exports = router;
