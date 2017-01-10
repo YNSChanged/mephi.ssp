@@ -4,20 +4,9 @@ block content
     .clearfix
     .content
         .sport-your
-            link(href='stylesheets/owl.carousel.css', rel='stylesheet')
-            script(src='javascripts/owl.carousel.js')
-            script.
-                $(document).ready(function() {
-                    $("#owl-demo").owlCarousel({
-                        items : 5,
-                        lazyLoad : true,
-                        autoPlay : true,
-                        navigation : true,
-                        navigationText :  true,
-                        pagination : false,
-                    });
-                });
             .line2
         .content-grids
+            -if (s)
+                h3=s
             h1 Вы находитесь на сайте аренды туристического оборудования.
             p Для того, чтобы сделать заказ, пожалуйста, авторизуйтесь.

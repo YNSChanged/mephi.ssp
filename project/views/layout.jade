@@ -30,16 +30,6 @@ html
                     ul.header-in
                         li
                             a(href="/lk")=name
-                    .search-box
-                        #sb-search.sb-search
-                            form
-                                input#search.sb-search-input(placeholder='Что вы ищете?', type='search', name='search')
-                                input.sb-search-submit(type='submit', value='')
-                                span.sb-icon-search
-                    script(src='javascripts/classie.js')
-                    script(src='javascripts/uisearch.js')
-                    script.
-                        new UISearch( document.getElementById( 'sb-search' ) );
                     .online
                         a(href='/basket')="Корзина: " + basketCounter
                     .clearfix
@@ -57,7 +47,7 @@ html
                             li
                                 a(href='/product/knifes') Ножи
                             li
-                                a(href='/product/sales') Скидки
+                                a(href='/news') Новости
                             li
                                 a(href='/product/sets') Наборы
                     .clearfix

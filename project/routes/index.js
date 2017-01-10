@@ -9,7 +9,6 @@ var connection = mysql.createConnection({
     insecureAuth : true
 });
 
-
 connection.connect();
 
 function Prod(name, descr, href, color, price, mainImg){
@@ -41,12 +40,10 @@ router.get('/', function(req, res) {
         req.session.auth = false;
         res.redirect('/');
     }
-    console.log(req.session.sessId);
     if (req.session.auth) res.redirect('/');
     else res.render('auth', {error: ""})
 }).get('/auth', function (req, res) {
     connection.query('SELECT * FROM Users WHERE login=' + connection.escape(req.query.username) + ' AND password=' + connection.escape(req.query.password) + ';', function (err, rows) {
-        console.log(err);
         if (rows) {
             req.session.auth = true;
             req.session.login = req.query.username;
@@ -61,39 +58,36 @@ router.get('/', function(req, res) {
 }).post('/register', function (req, res) {
     if (req.body.passwordsignup != req.body.passwordsignup_confirm) res.render('register', {error: "Пароли не совпадают"});
     else {
-        connection.query("Select * From Users where login=" + req.body.usernamesignup + ";", function (err, rows) {
-            if (rows) res.render('register', {error: "Логин занят"});
+        connection.query("Select * From Users where login=" + connection.escape(req.body.usernamesignup) + ";", function (err, rows) {
+            if (Object.keys(rows).length > 0) res.render('register', {error: "Логин занят"});
             else {
                 connection.query("Select MAX(id) as id From Users;", function (err, rows) {
-                    console.log(err);
-                    connection.query("Lock tables Users write;");
                     connection.query("INSERT INTO Users(`id`,`login`,`password`,`name`,`email`) " +
                         "VALUES("+(rows[0].id+1)+","+ connection.escape(req.body.usernamesignup) +","+
                         connection.escape(req.body.passwordsignup) +","+ connection.escape(req.body.name) +"," + connection.escape(req.body.emailsignup) + ");", function (err, rows) {
-                        console.log(err)
                     });
                 });
-                connection.query("unlock tables;");
+                res.redirect('/');
             }
-        })
-        //if (er) res.render('register', { error: "Что-то пошло не так. Проверьте, корректно ли заполнены поля?. Возможно этот логин уже занят."});
-        //else {
-            res.redirect('/');
-        //}
+        });
 
     }
 }).get('/product/:category', function (req, res) {
     if (!req.session.basket) req.session.basket = [];
     switch (req.params.category) {
+        case '1':
+            connection.query('Select * from Orders', function (err, rows) {
+                res.writeHead(200, {"Content-Type": "application/json"});
+                res.write(JSON.stringify(rows));
+                res.end();
+            });
+            break;
         case "tents":
             var r;
             var list = [];
-            console.log(1);
             connection.query('SELECT * FROM Products WHERE category="tents";', function (err, rows, fields) {
                 r = rows;
-                console.log(err);
                 if (r) { r.forEach(function (item) {
-                    console.log(1);
                     list.push(new Prod(item.name, item.description, "/product/id=" + item.id, item.color, item.price, "id" + item.id + ".jpg"));
                     res.render('products', {name: (req.session.auth) ? 'Выйти' : 'Авторизация', basketCounter: req.session.basket.length, topProdList:list})
                 }) }
@@ -105,18 +99,16 @@ router.get('/', function(req, res) {
                 req.session.basket.push(parseInt(req.params.category.toString().substring(4)));
                 req.session.basketCounter = req.session.basket.length;
                 connection.query("Select * From Products Where id=" + parseInt(req.params.category.toString().substring(4)) + ";", function (err, rows) {
-                    console.log(rows);
                     res.render('single', {name: (req.session.auth) ? 'Выйти' : 'Авторизация', basketCounter: req.session.basket.length, prod: rows[0], id: rows[0].id})
                 });
             } else
             if (req.params.category.toString().substring(0,3) == "id=") {
                 connection.query("Select * From Products Where id=" + parseInt(req.params.category.toString().substring(3)) + ";", function (err, rows) {
-                    console.log(rows)
                     res.render('single', {name: (req.session.auth) ? 'Выйти' : 'Авторизация', basketCounter: req.session.basket.length, prod: rows[0], id: rows[0].id})
                 });
             }
             else res.send("unknown");
-            break;
+                break;
     }
 }).get('/basket', function (req, res) {
     if (!req.session.basket) req.session.basket = [];
@@ -126,13 +118,11 @@ router.get('/', function(req, res) {
             for (var i = 0; i < rows.length; i++)
                 if (rows[i].id == item) basketList.push({name: rows[i].name, price: rows[i].price});
         });
-        console.log(req.session.auth)
         res.render('basket', {name: (req.session.auth) ? 'Выйти' : 'Авторизация', basketCounter: req.session.basketCounter, list: basketList, auth: req.session.auth});
     });
 }).get('/order', function (req, res) {
     // реализовать через триггер.
     connection.query("SELECT id From Users where login='" + req.session.login + "';",function (err, rows1) {
-        console.log(err)
         var i;
         req.session.basket.forEach(function (item) {
             connection.query("Lock tables Orders write, Products write;");
@@ -144,11 +134,26 @@ router.get('/', function(req, res) {
                     connection.query("Update Products set amount = " + (rows2[0].amount - req.session.basket.length) + " where id=" + item + ";")
                 })
             });
-            connection.query("Unlock tables");
+            connection.query("Unlock tables;");
         });
     });
     req.session.basket = [];
     res.redirect('/');
+}).get('/news', function (req, res) {
+    var feedparser = require('ortoo-feedparser');
+    var list = "";
+    var i = 0;
+    var url = "http://news.turizm.ru/news.rss?categories=537,545,518,786,559,818,772,540,555,884,515,840,550,563,774,789,483,532,482,800";
+    feedparser.parseUrl(url).on('article', function (article) {
+        if (i==10) res.end(list);
+        else {
+            list += "<a href=" + article.link + "><h4>" + article.title + "</h4><p>" + article.summary + "</p>";
+            i++;
+        }
+    });
+}).post('/checklogin',function (req, res) {
+    console.log(req.body);
+    res.send("lol");
 });
 
 module.exports = router;
